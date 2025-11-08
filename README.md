@@ -1,5 +1,8 @@
 # video-tools
 
+![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python&logoColor=white) ![License](https://img.shields.io/badge/License-MIT-green) ![Tests](https://img.shields.io/badge/Tests-pytest-passing) ![Status](https://img.shields.io/badge/Status-Active-success)
+
+
 Unified toolkit for two previously separate utilities:
 - **VideoScraperPlus** (authenticated Selenium scraping + FFmpeg downloads)
 - **YouTube Channel Downloader** (yt-dlp channel/archive sync)
