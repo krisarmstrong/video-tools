@@ -1,4 +1,6 @@
 # video-tools
+[![Checks](https://github.com/krisarmstrong/video-tools/actions/workflows/checks.yml/badge.svg)](https://github.com/krisarmstrong/video-tools/actions/workflows/checks.yml)
+
 
 ![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python&logoColor=white) ![License](https://img.shields.io/badge/License-MIT-green) ![Tests](https://img.shields.io/badge/Tests-pytest-passing) ![Status](https://img.shields.io/badge/Status-Active-success)
 
@@ -72,6 +74,13 @@ url = scraper.scrape_portal(
 ```
 
 ## Development
+
+Run the full local checks:
+
+```bash
+./check.sh
+```
+
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -e .[test]

@@ -61,7 +61,9 @@ def download_channel(
     )
 
     if yt_dlp is None:  # pragma: no cover - run-time error
-        raise RuntimeError("yt-dlp is not installed. Please install video-tools with its default dependencies.")
+        raise RuntimeError(
+            "yt-dlp is not installed. Please install video-tools with its default dependencies."
+        )
 
     logging.info("Starting yt-dlp download for %s", url)
     with yt_dlp.YoutubeDL(opts) as ydl:

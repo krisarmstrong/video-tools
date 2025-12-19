@@ -41,7 +41,9 @@ def test_run_scrape(monkeypatch, tmp_path):
     dummy_store = DummyStore()
 
     monkeypatch.setattr(cli.scraper, "CredentialStore", lambda: dummy_store)
-    monkeypatch.setattr(cli.scraper, "scrape_portal", lambda **kwargs: "https://video.example/stream")
+    monkeypatch.setattr(
+        cli.scraper, "scrape_portal", lambda **kwargs: "https://video.example/stream"
+    )
 
     args = SimpleNamespace(
         url="https://portal.example",

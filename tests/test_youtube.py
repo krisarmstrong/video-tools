@@ -1,6 +1,5 @@
-from pathlib import Path
-
 from video_tools import youtube
+
 
 def test_build_options(tmp_path):
     cookies = tmp_path / "cookies.txt"

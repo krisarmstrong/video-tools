@@ -21,19 +21,33 @@ def build_parser() -> argparse.ArgumentParser:
 
     youtube_parser = subparsers.add_parser("youtube", help="Download via yt-dlp.")
     youtube_parser.add_argument("--url", required=True, help="Channel, playlist, or video URL.")
-    youtube_parser.add_argument("--output-dir", type=Path, default=Path("downloads"), help="Output directory.")
-    youtube_parser.add_argument("--format", default="bestvideo+bestaudio", help="yt-dlp format string.")
-    youtube_parser.add_argument("--no-resume", action="store_true", help="Disable resume for partially downloaded files.")
+    youtube_parser.add_argument(
+        "--output-dir", type=Path, default=Path("downloads"), help="Output directory."
+    )
+    youtube_parser.add_argument(
+        "--format", default="bestvideo+bestaudio", help="yt-dlp format string."
+    )
+    youtube_parser.add_argument(
+        "--no-resume", action="store_true", help="Disable resume for partially downloaded files."
+    )
     youtube_parser.add_argument("--rate-limit", help="Network rate limit (e.g., 2M).")
-    youtube_parser.add_argument("--cookies", type=Path, help="Path to cookies.txt for authenticated downloads.")
+    youtube_parser.add_argument(
+        "--cookies", type=Path, help="Path to cookies.txt for authenticated downloads."
+    )
     youtube_parser.add_argument("--retries", type=int, default=3, help="Number of yt-dlp retries.")
 
-    scrape_parser = subparsers.add_parser("scrape", help="Automate an authenticated browser session and extract video URLs.")
+    scrape_parser = subparsers.add_parser(
+        "scrape", help="Automate an authenticated browser session and extract video URLs."
+    )
     scrape_parser.add_argument("--url", required=True, help="Portal URL to authenticate against.")
     scrape_parser.add_argument("--username", help="Login username/email.")
     scrape_parser.add_argument("--password", help="Login password.")
-    scrape_parser.add_argument("--username-field", default="Email", help="HTML name attribute for username field.")
-    scrape_parser.add_argument("--password-field", default="Password", help="HTML name attribute for password field.")
+    scrape_parser.add_argument(
+        "--username-field", default="Email", help="HTML name attribute for username field."
+    )
+    scrape_parser.add_argument(
+        "--password-field", default="Password", help="HTML name attribute for password field."
+    )
     scrape_parser.add_argument(
         "--navigation",
         action="append",
@@ -57,11 +71,24 @@ def build_parser() -> argparse.ArgumentParser:
         "--credential-alias",
         help="Name used to store/retrieve credentials (defaults to hostname).",
     )
-    scrape_parser.add_argument("--remember", action="store_true", help="Persist provided credentials for future runs.")
-    scrape_parser.add_argument("--download", action="store_true", help="Automatically download via ffmpeg.")
-    scrape_parser.add_argument("--output-file", type=Path, help="Video output filename (used with --download).")
-    scrape_parser.add_argument("--headless", action=argparse.BooleanOptionalAction, default=True, help="Run Chrome headless.")
-    scrape_parser.add_argument("--wait-timeout", type=int, default=15, help="Seconds to wait for page elements.")
+    scrape_parser.add_argument(
+        "--remember", action="store_true", help="Persist provided credentials for future runs."
+    )
+    scrape_parser.add_argument(
+        "--download", action="store_true", help="Automatically download via ffmpeg."
+    )
+    scrape_parser.add_argument(
+        "--output-file", type=Path, help="Video output filename (used with --download)."
+    )
+    scrape_parser.add_argument(
+        "--headless",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Run Chrome headless.",
+    )
+    scrape_parser.add_argument(
+        "--wait-timeout", type=int, default=15, help="Seconds to wait for page elements."
+    )
 
     return parser
 
@@ -85,7 +112,9 @@ def setup_logging(verbose: bool, logfile: Path | None) -> None:
     handlers = [logging.StreamHandler(sys.stdout)]
     if logfile:
         handlers.append(logging.FileHandler(logfile))
-    logging.basicConfig(level=level, handlers=handlers, format="%(asctime)s [%(levelname)s] %(message)s")
+    logging.basicConfig(
+        level=level, handlers=handlers, format="%(asctime)s [%(levelname)s] %(message)s"
+    )
 
 
 def _run_youtube(args: argparse.Namespace) -> int:
@@ -112,13 +141,15 @@ def _run_scrape(args: argparse.Namespace) -> int:
     username = args.username
     password = args.password
 
-    if (not username or not password):
+    if not username or not password:
         stored = store.get(alias)
         if stored:
             username, password = stored
 
     if not username or not password:
-        logging.error("Credentials are required. Provide --username/--password or store them with --remember.")
+        logging.error(
+            "Credentials are required. Provide --username/--password or store them with --remember."
+        )
         return 1
 
     if args.remember and args.username and args.password:

@@ -5,10 +5,9 @@ from __future__ import annotations
 import json
 import logging
 import subprocess
-import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Iterable, List, Tuple
+from typing import Iterable, TYPE_CHECKING, Tuple
 from urllib.parse import urlparse
 
 try:  # pragma: no cover
@@ -19,6 +18,9 @@ try:  # pragma: no cover
     from webdriver_manager.chrome import ChromeDriverManager  # type: ignore
 except ImportError:  # pragma: no cover
     ChromeDriverManager = None  # type: ignore
+
+if TYPE_CHECKING:  # pragma: no cover
+    from selenium import webdriver
 
 
 def default_store_path() -> Path:
@@ -51,7 +53,9 @@ class CredentialStore:
             return None
         username = profile["username"]
         if keyring is None:
-            raise RuntimeError("keyring is not installed. Install video-tools with its default extras.")
+            raise RuntimeError(
+                "keyring is not installed. Install video-tools with its default extras."
+            )
         password = keyring.get_password("video-tools", username)
         if not password:
             return None
@@ -60,7 +64,9 @@ class CredentialStore:
     def store(self, alias: str, username: str, password: str) -> None:
         self.save_metadata(alias, username)
         if keyring is None:
-            raise RuntimeError("keyring is not installed. Install video-tools with its default extras.")
+            raise RuntimeError(
+                "keyring is not installed. Install video-tools with its default extras."
+            )
         keyring.set_password("video-tools", username, password)
 
 
@@ -104,7 +110,9 @@ def _selenium():
 def create_driver(headless: bool = True):
     webdriver, _, _, _, Options, Service = _selenium()
     if ChromeDriverManager is None:
-        raise RuntimeError("webdriver-manager is not installed. Install video-tools with its default dependencies.")
+        raise RuntimeError(
+            "webdriver-manager is not installed. Install video-tools with its default dependencies."
+        )
     options = Options()
     if headless:
         options.add_argument("--headless")
