@@ -56,3 +56,10 @@ env/
 *.log
 chromedriver*
 geckodriver*
+
+# Tooling defaults
+.env
+.env.*
+.mypy_cache/
+.ruff_cache/
+coverage.xml

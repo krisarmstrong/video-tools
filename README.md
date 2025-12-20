@@ -94,6 +94,6 @@ nox -s tests
 ```
 
 ## Releases & CI
-- Versions are derived from annotated git tags via `setuptools_scm`.
+- Versions are stored in `pyproject.toml`; release-please manages tags and changelog entries.
 - `.github/workflows/ci.yml` runs `nox -s tests` on pushes, PRs, and tags.
-- To release: `git tag -a vX.Y.Z -m "vX.Y.Z" && git push origin vX.Y.Z`.
+- To release: merge the release-please PR (or tag manually if needed).
