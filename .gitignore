@@ -1,9 +1,28 @@
-# Python
+# ╔═══════════════════════════════════════════════════════════════════════════╗
+# ║ Video Tools - .gitignore                                                  ║
+# ╠═══════════════════════════════════════════════════════════════════════════╣
+# ║ Unified CLI + SDK for downloading videos via yt-dlp or scripted scraping  ║
+# ║ Stack: Python 3.x, yt-dlp, Selenium, video processing                    ║
+# ╚═══════════════════════════════════════════════════════════════════════════╝
+
+# ─── Python Core ─────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
+*.pyc
+*.pyo
+*.pyd
+
+# ─── Virtual Environments ────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
 .Python
+
+# ─── Distribution & Packaging ────────────────────────────────────────────────
 build/
 develop-eggs/
 dist/
@@ -20,18 +39,31 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+
+# ─── Testing & Coverage ──────────────────────────────────────────────────────
 .pytest_cache/
 .coverage
 .coverage.*
+coverage.xml
 htmlcov/
 .tox/
 .nox/
-.venv/
-venv/
-ENV/
-env/
+.hypothesis/
 
-# Video files (downloads)
+# ─── Type Checking & Linting ─────────────────────────────────────────────────
+.mypy_cache/
+.ruff_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+
+# ─── Environment & Secrets ───────────────────────────────────────────────────
+.env
+.env.*
+.env.local
+
+# ─── Downloaded Video Files ──────────────────────────────────────────────────
+# Video files (typically large, don't commit)
 *.mp4
 *.mkv
 *.webm
@@ -40,26 +72,60 @@ env/
 *.flv
 *.wmv
 *.m4v
+*.mpg
+*.mpeg
+*.3gp
 
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
+# Video metadata/thumbnails
+*.jpg
+*.jpeg
+*.png
+*.gif
+!docs/*.png
+!docs/*.jpg
 
-# Logs
-*.log
+# Subtitle files
+*.srt
+*.vtt
+*.ass
+*.ssa
 
-# Selenium
-*.log
+# ─── Download Directories ────────────────────────────────────────────────────
+downloads/
+output/
+videos/
+
+# ─── Selenium & Browser Automation ───────────────────────────────────────────
+# WebDriver binaries
 chromedriver*
 geckodriver*
+msedgedriver*
+operadriver*
 
-# Tooling defaults
-.env
-.env.*
-.mypy_cache/
-.ruff_cache/
-coverage.xml
+# Browser profiles/cache
+.selenium/
+browser_cache/
+
+# Screenshots from scraping
+screenshots/
+
+# ─── yt-dlp Cache ────────────────────────────────────────────────────────────
+.yt-dlp/
+cookies.txt
+
+# ─── Logs ────────────────────────────────────────────────────────────────────
+*.log
+download_*.log
+
+# ─── Temporary Files ─────────────────────────────────────────────────────────
+*.tmp
+*.temp
+*.part
+*~
+*.swp
+*.swo
+.tmp_*
+
+# Partial downloads
+*.part.*
+*.ytdl
