@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 try:  # pragma: no cover - optional dependency
     import yt_dlp  # type: ignore
@@ -19,12 +19,12 @@ def build_yt_dlp_options(
     rate_limit: str | None,
     cookies: Path | None,
     retries: int,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Return a configured options dict ready for YoutubeDL."""
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    opts: Dict[str, Any] = {
+    opts: dict[str, Any] = {
         "format": video_format,
         "merge_output_format": "mp4",
         "continuedl": resume,

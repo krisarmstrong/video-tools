@@ -4,10 +4,12 @@ from __future__ import annotations
 
 import json
 import logging
+import shutil
 import subprocess
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Iterable, TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 try:  # pragma: no cover
@@ -46,7 +48,7 @@ class CredentialStore:
         data[alias] = {"username": username}
         self.path.write_text(json.dumps(data, indent=2), encoding="utf-8")
 
-    def get(self, alias: str) -> Tuple[str, str] | None:
+    def get(self, alias: str) -> tuple[str, str] | None:
         data = self.load()
         profile = data.get(alias)
         if not profile:
@@ -70,7 +72,7 @@ class CredentialStore:
         keyring.set_password("video-tools", username, password)
 
 
-def selector_to_by(selector: str) -> Tuple[str, str]:
+def selector_to_by(selector: str) -> tuple[str, str]:
     """Parse selector string; returns strategy + query."""
 
     if selector.startswith("xpath:"):
@@ -87,33 +89,33 @@ def hostname_alias(url: str) -> str:
     return host.split(":")[0]
 
 
-def _resolve_by(strategy: str, By) -> str:
+def _resolve_by(strategy: str, by) -> str:
     mapping = {
-        "css": By.CSS_SELECTOR,
-        "xpath": By.XPATH,
-        "name": By.NAME,
+        "css": by.CSS_SELECTOR,
+        "xpath": by.XPATH,
+        "name": by.NAME,
     }
     return mapping[strategy]
 
 
 def _selenium():
     from selenium import webdriver
-    from selenium.webdriver.common.by import By
-    from selenium.webdriver.support import expected_conditions as EC
-    from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.chrome.service import Service
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.support import expected_conditions
+    from selenium.webdriver.support.ui import WebDriverWait
 
-    return webdriver, By, EC, WebDriverWait, Options, Service
+    return webdriver, By, expected_conditions, WebDriverWait, Options, Service
 
 
 def create_driver(headless: bool = True):
-    webdriver, _, _, _, Options, Service = _selenium()
+    webdriver, _, _, _, options_cls, service_cls = _selenium()
     if ChromeDriverManager is None:
         raise RuntimeError(
             "webdriver-manager is not installed. Install video-tools with its default dependencies."
         )
-    options = Options()
+    options = options_cls()
     if headless:
         options.add_argument("--headless")
     options.add_argument("--disable-gpu")
@@ -121,7 +123,7 @@ def create_driver(headless: bool = True):
     options.add_argument("--disable-extensions")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    service = Service(ChromeDriverManager().install())
+    service = service_cls(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
     return driver
 
@@ -137,18 +139,24 @@ def login_and_navigate(
     navigation_steps: Iterable[str],
     wait_timeout: int,
 ) -> None:
-    _, By, EC, WebDriverWait, _, _ = _selenium()
+    _, by, expected_conditions, web_driver_wait, _, _ = _selenium()
 
     driver.get(url)
-    wait = WebDriverWait(driver, wait_timeout)
+    wait = web_driver_wait(driver, wait_timeout)
 
-    wait.until(EC.presence_of_element_located((By.NAME, username_field))).send_keys(username)
-    wait.until(EC.presence_of_element_located((By.NAME, password_field))).send_keys(password + "\n")
+    username_input = wait.until(
+        expected_conditions.presence_of_element_located((by.NAME, username_field))
+    )
+    password_input = wait.until(
+        expected_conditions.presence_of_element_located((by.NAME, password_field))
+    )
+    username_input.send_keys(username)
+    password_input.send_keys(password + "\n")
 
     for raw_selector in navigation_steps:
         strategy, query = selector_to_by(raw_selector)
-        locator = (_resolve_by(strategy, By), query)
-        wait.until(EC.element_to_be_clickable(locator)).click()
+        locator = (_resolve_by(strategy, by), query)
+        wait.until(expected_conditions.element_to_be_clickable(locator)).click()
 
 
 def extract_video_url(
@@ -158,17 +166,22 @@ def extract_video_url(
     attribute: str,
     wait_timeout: int,
 ) -> str:
-    _, By, EC, WebDriverWait, _, _ = _selenium()
+    _, by, expected_conditions, web_driver_wait, _, _ = _selenium()
 
-    wait = WebDriverWait(driver, wait_timeout)
+    wait = web_driver_wait(driver, wait_timeout)
     strategy, query = selector_to_by(selector)
-    element = wait.until(EC.presence_of_element_located((_resolve_by(strategy, By), query)))
+    element = wait.until(
+        expected_conditions.presence_of_element_located((_resolve_by(strategy, by), query))
+    )
     return element.get_attribute(attribute)
 
 
 def download_with_ffmpeg(video_url: str, output_file: Path) -> None:
+    ffmpeg = shutil.which("ffmpeg")
+    if ffmpeg is None:
+        raise RuntimeError("ffmpeg executable not found")
     command = [
-        "ffmpeg",
+        ffmpeg,
         "-y",
         "-i",
         video_url,

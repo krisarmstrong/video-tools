@@ -3,10 +3,10 @@ name = "video-tools"
 version = "2.0.3"
 description = "Unified CLI + SDK for downloading videos via yt-dlp or scripted scraping."
 authors = [
-    { name = "Kris Armstrong", email = "kris.armstrong@example.com" }
+    { name = "Kris Armstrong", email = "kris.armstrong@me.com" }
 ]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.14"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -63,5 +63,8 @@ skip_empty = true
 line-length = 100
 extend-exclude = ["build", "dist", ".venv", "venv", ".tox", ".mypy_cache", ".ruff_cache"]
 
-[tool.black]
-line-length = 100
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+docstring-code-format = true
